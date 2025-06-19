@@ -17,6 +17,15 @@ resource "aws_security_group" "netbird" {
   #   cidr_blocks = ["0.0.0.0/0"]
   # }
 
+  # SMTP over TLS
+  ingress {
+    description = "SMTP over TLS"
+    from_port   = 587
+    to_port     = 587
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   ingress {
     description = "http"
     from_port   = 80

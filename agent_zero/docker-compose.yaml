@@ -1,0 +1,27 @@
+networks:
+  agent_zero_network:
+    driver: bridge
+
+services:
+  ollama:
+    image: ollama/ollama:rocm
+    container_name: ollama
+    command: /bin/ollama serve
+    ports:
+      - "11434:11434"
+    networks:
+      - agent_zero_network
+
+  agent-zero:
+    image: frdel/agent-zero-run:latest
+    container_name: agent-zero
+    command: /exe/initialize.sh
+    networks:
+      - agent_zero_network
+    ports:
+      - "50001:80"
+    expose:
+      - "22"
+      - "9000-9009"
+    environment:
+      - AGENT_ZERO_OLLAMA_URL=http://ollama:11434
