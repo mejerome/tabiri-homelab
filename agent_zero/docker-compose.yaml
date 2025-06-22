@@ -34,7 +34,5 @@ services:
       - "9000-9009"
     volumes:
       - agent_zero_data:/data
-    environment:
-      - API_KEY_GOOGLE="AIzaSyAvsxE5tzDmMS2GFTzgW1NeMQFTY-Oay7s"
-      - API_KEY_DEEPSEEK="sk-9b1c3d2f-4e5f-4a6b-8c7d-8e9f0a1b2c3d"
-      - OLLAMA_BASE_URL="http://ollama:11434"
+    env_file:
+      - .env
