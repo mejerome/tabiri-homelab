@@ -17,6 +17,15 @@ resource "aws_security_group" "netbird" {
   #   cidr_blocks = ["0.0.0.0/0"]
   # }
 
+  # Beszel Monitoring
+  ingress {
+    description = "TCP"
+    from_port   = 45876
+    to_port     = 45876
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   # SMTP over TLS
   ingress {
     description = "SMTP over TLS"
