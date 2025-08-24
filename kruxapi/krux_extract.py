@@ -1,7 +1,5 @@
 import os
-import json
 from datetime import datetime
-import os
 import logging
 import requests
 import psycopg2
@@ -204,7 +202,7 @@ def insert_dsr_additional_charges_to_postgres(conn, records):
 
 if __name__ == "__main__":
     # use full timestamp format expected by the API
-    start_of_july = "2025-07-01"
+    start_of_july = "2025-02-01"
 
     conn = get_db_connection()
     if conn:
