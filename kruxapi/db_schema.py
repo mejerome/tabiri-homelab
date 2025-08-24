@@ -186,6 +186,30 @@ def create_holes_table(conn):
         conn.commit()
     print("Table 'holes' is ready.")
 
+
+def create_dsr_additional_charges_table(conn):
+    """Creates the dsr_additional_charges table if it doesn't exist."""
+    create_table_query = """
+    CREATE TABLE IF NOT EXISTS dsr_additional_charges (
+        UID VARCHAR(50) PRIMARY KEY,
+        DailyReportID VARCHAR(255),
+        HoleID INTEGER,
+        HoleName VARCHAR(255),
+        Description VARCHAR(255),
+        ChargeRate NUMERIC(12,3),
+        ChargeableQuantity NUMERIC(12,1),
+        TotalCharges NUMERIC(12,2),
+        CurrencyCode CHAR(3),
+        DeletedFlag CHAR(1),
+        ExportDateTime TIMESTAMP,
+        DataDeleted CHAR(1)
+    );
+    """
+    with conn.cursor() as cur:
+        cur.execute(create_table_query)
+        conn.commit()
+    print("Table 'dsr_additional_charges' is ready.")
+
 def create_all_tables(conn):
     """Create all Krux-related tables."""
     create_reports_table(conn)
@@ -194,3 +218,4 @@ def create_all_tables(conn):
     create_dsr_workers_labour_table(conn)
     create_dsr_activity_labour_table(conn)
     create_holes_table(conn)
+    create_dsr_additional_charges_table(conn)

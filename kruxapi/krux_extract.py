@@ -135,116 +135,48 @@ def upsert_records(conn, table_name: str, columns: list, records: list):
 # Table-specific wrappers (define column order to match DB schema)
 def insert_dsr_to_postgres(conn, records):
     columns = [
-        "UID",
-        "DailyReportID",
-        "ContractorCompany",
-        "ContracteeCompany",
-        "Contract",
-        "Project",
-        "Drill",
-        "ReportDate",
-        "Status",
-        "Supervisor",
-        "Shift",
-        "ValidatedBy",
-        "ValidatedDate",
-        "ApprovedBy",
-        "ApprovedDate",
-        "DeletedFlag",
-        "ExportDateTime",
-        "ContractID",
+        "UID", "DailyReportID", "ContractorCompany", "ContracteeCompany",
+        "Contract", "Project", "Drill", "ReportDate", "Status",
+        "Supervisor", "Shift", "ValidatedBy", "ValidatedDate", "ApprovedBy",
+        "ApprovedDate", "DeletedFlag", "ExportDateTime", "ContractID",
     ]
     upsert_records(conn, "daily_reports", columns, records)
 
 
 def insert_dsr_activity_to_postgres(conn, records):
     columns = [
-        "UID",
-        "DailyReportID",
-        "HoleID",
-        "Hole",
-        "Activity",
-        "Type",
-        "BitSize",
-        "DistanceDrilledFrom",
-        "DistanceDrilledTo",
-        "Distance",
-        "Depth",
-        "Billable",
-        "ActivityHours",
-        "TotalManHours",
-        "Penetration",
-        "BillingType",
-        "DistanceFromToUnitAbbr",
-        "DistanceUnitAbbr",
-        "DepthUnitAbbr",
-        "TotalCharges",
-        "CurrencyCode",
-        "DeletedFlag",
-        "ExportDateTime",
-        "WorkSubCategoryID",
-        "WorkSubCategoryTypeID",
-        "DataDeleted",
-        "ChargeFrom",
-        "ChargeTo",
-        "Comments",
-        "BitSizeID",
+        "UID", "DailyReportID", "HoleID", "Hole", "Activity", "Type", "BitSize",
+        "DistanceDrilledFrom", "DistanceDrilledTo", "Distance", "Depth", "Billable",
+        "ActivityHours", "TotalManHours", "Penetration", "BillingType",
+        "DistanceFromToUnitAbbr", "DistanceUnitAbbr", "DepthUnitAbbr",
+        "TotalCharges", "CurrencyCode", "DeletedFlag", "ExportDateTime",
+        "WorkSubCategoryID", "WorkSubCategoryTypeID", "DataDeleted",
+        "ChargeFrom", "ChargeTo", "Comments", "BitSizeID",
     ]
     upsert_records(conn, "dsr_activity", columns, records)
 
 
 def insert_dsr_activity_equipment_to_postgres(conn, records):
     columns = [
-        "UID",
-        "DailyReportID",
-        "HoleID",
-        "Hole",
-        "Activity",
-        "Equipment",
-        "EquipmentHours",
-        "EquipmentUnit",
-        "BillingType",
-        "TotalCharges",
-        "CurrencyCode",
-        "DeletedFlag",
-        "ExportDateTime",
-        "ContractorEquipmentID",
-        "DataDeleted",
+        "UID", "DailyReportID", "HoleID", "Hole", "Activity", "Equipment", "EquipmentHours",
+        "EquipmentUnit", "BillingType", "TotalCharges", "CurrencyCode", "DeletedFlag",
+        "ExportDateTime", "ContractorEquipmentID", "DataDeleted",
     ]
     upsert_records(conn, "dsr_activity_equipment", columns, records)
 
 
 def insert_dsr_workers_labour_to_postgres(conn, records):
     columns = [
-        "UID",
-        "DailyReportID",
-        "Name",
-        "Role",
-        "PayrollHours",
-        "BillingType",
-        "TotalCharges",
-        "CurrencyCode",
-        "DeletedFlag",
-        "ExportDateTime",
-        "DataDeleted",
+        "UID", "DailyReportID", "Name", "Role", "PayrollHours", "BillingType", "TotalCharges",
+        "CurrencyCode", "DeletedFlag", "ExportDateTime", "DataDeleted",
     ]
     upsert_records(conn, "dsr_workers_labour", columns, records)
 
 
 def insert_dsr_activity_labour_to_postgres(conn, records):
     columns = [
-        "UID",
-        "DailyReportID",
-        "Activity",
-        "Name",
-        "Role",
-        "ManHours",
-        "BillingType",
-        "TotalCharges",
-        "CurrencyCode",
-        "DeletedFlag",
-        "ExportDateTime",
-        "DataDeleted",
+        "UID", "DailyReportID", "Activity", "Name", "Role", "ManHours", "BillingType",
+        "TotalCharges", "CurrencyCode", "DeletedFlag", "ExportDateTime", "DataDeleted",
     ]
     upsert_records(conn, "dsr_activity_labour", columns, records)
 
@@ -260,6 +192,15 @@ def insert_holes_to_postgres(conn, records):
         "ParentHoleID"
     ]
     upsert_records(conn, "holes", columns, records)
+
+
+def insert_dsr_additional_charges_to_postgres(conn, records):
+    columns = [
+        "UID", "DailyReportID", "HoleID", "HoleName", "Description",
+        "ChargeRate", "ChargeableQuantity", "TotalCharges", "CurrencyCode",
+        "DeletedFlag", "ExportDateTime", "DataDeleted",
+    ]
+    upsert_records(conn, "dsr_additional_charges", columns, records)
 
 if __name__ == "__main__":
     # use full timestamp format expected by the API
@@ -299,6 +240,11 @@ if __name__ == "__main__":
         holes_records = fetch_krux_data(start_date=start_of_july, query_name="Holes")
         if holes_records:
             insert_holes_to_postgres(conn, holes_records)
+
+        # DSRAdditionalCharges extraction
+        dsr_additional_charges_records = fetch_krux_data(start_date=start_of_july, query_name="DSRAdditionalCharges")
+        if dsr_additional_charges_records:
+            insert_dsr_additional_charges_to_postgres(conn, dsr_additional_charges_records)
 
         conn.close()
 
