@@ -1,0 +1,35 @@
+networks:
+  agent_zero_network:
+    driver: bridge
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: always
+    networks:
+      - agent_zero_network
+    ports:
+      - "11434:11434"
+    volumes:
+      - /opt/ollama-data:/data
+    environment:
+      - OLLAMA_MODEL_PATH=/data/models
+
+  agent-zero:
+    image: frdel/agent-zero-run:latest
+    container_name: agent_zero
+    restart: always
+    networks:
+      - agent_zero_network
+    ports:
+      - "50001:80"
+    volumes:
+      - /opt/agentzero-data:/a0
+    expose:
+      - "22"
+      - "9000-9009"
+    environment:
+      - API_KEY_GOOGLE=${API_KEY_GOOGLE}
+      - API_KEY_DEEPSEEK=${API_KEY_DEEPSEEK}
+      - OLLAMA_API_URL=http://ollama:11434
