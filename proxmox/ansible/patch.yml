@@ -1,0 +1,16 @@
+---
+- hosts: all
+  gather_facts: yes
+  tasks:
+    - name: Ensure all packages are up to date (Debian/Ubuntu)
+      apt:
+        update_cache: yes
+        upgrade: dist
+      when: ansible_facts['os_family'] == 'Debian'
+
+    - name: Ensure all packages are up to date (RedHat/CentOS)
+      dnf:
+        name: '*'
+        state: latest
+      when: ansible_facts['os_family'] == 'RedHat'
+      become: yes
