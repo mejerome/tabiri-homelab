@@ -1,0 +1,19 @@
+- name: Backup Proxmox VMs and Containers
+  hosts: proxmox
+  become: yes
+  vars:
+    backup_storage: "/media/storage/dump"
+    retention_days: 7
+
+  tasks:
+    - name: Ensure backup storage exists
+      ansible.builtin.file:
+        path: "{{ backup_storage }}"
+        state: directory
+
+    - name: Backup all guest systems
+      ansible.builtin.shell: "vzdump --all --mode snapshot --dumpdir {{ backup_storage }} --node {{ inventory_hostname }}"
+      register: backup_result
+
+    # - name: Remove backups older than {{ retention_days }}
+    #   ansible.builtin.shell: "find {{ backup_storage }} -name '*.zst' -mtime +{{ retention_days }} -delete"

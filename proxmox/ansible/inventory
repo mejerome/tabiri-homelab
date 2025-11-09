@@ -1,26 +1,26 @@
 # Ansible Inventory Template
-
 [all]
-pve ansible_host=192.168.68.63 ansible_user=root ansible_connection=ssh
-emby ansible_host=192.168.68.74 ansible_user=root ansible_connection=ssh
-beszel ansible_host=192.168.68.56 ansible_user=root ansible_connection=ssh
-adguard ansible_host=192.168.68.10 ansible_user=root ansible_connection=ssh
-nginx ansible_host=192.168.68.11 ansible_user=root ansible_connection=ssh
+hwpve
+minipve
+asuspve
+hostvm
 
 [proxmox]
-pve ansible_host=192.168.68.63 ansible_user=root ansible_connection=ssh
+hwpve ansible_host=192.168.68.11 
+minipve ansible_host=192.168.68.12
+asuspve ansible_host=192.168.68.15
 
-[lxc]
-emby ansible_host=192.168.68.74 ansible_user=root ansible_connection=ssh
-beszel ansible_host=192.168.68.56 ansible_user=root ansible_connection=ssh
-adguard ansible_host=192.168.68.10 ansible_user=root ansible_connection=ssh
-nginx ansible_host=192.168.68.11 ansible_user=root ansible_connection=ssh
+[proxmox:vars]
+ansible_user=root
+ansible_connection=ssh
 
-[vms]
-nextcloud ansible_host=192.168.68.12 ansible_user=root ansible_connection=ssh
+[netbird]
+hostvm ansible_host=72.61.0.17 
 
-[aws]
-netbird ansible_host=netbird.syslogsolution.us ansible_user=ec2-user ansible_ssh_private_key_file=~/Documents/local-repo/syslog.pem ansible_connection=ssh
+[netbird:vars]
+ansible_user=root 
+ansible_ssh_private_key_file=~/.ssh/id_rsa 
+ansible_connection=ssh
 
 ; [web]
 # web1 ansible_host=192.168.1.20

@@ -1,0 +1,67 @@
+---
+- name: Disable sleep/hibernate on Proxmox VE
+  hosts: "{{ target }}"
+  gather_facts: yes
+
+  tasks:
+    - name: Harden PVE host — disable sleep/hibernate
+      block:
+        - name: Mask sleep targets
+          systemd:
+            name: "{{ item }}"
+            masked: yes
+            state: stopped
+          loop: [sleep.target, suspend.target, hibernate.target, hybrid-sleep.target]
+
+        - name: Disable PVE hibernate service
+          systemd:
+            name: pve-hibernate.service
+            masked: yes
+            state: stopped
+
+        - name: Configure logind for server use
+          ini_file:
+            path: /etc/systemd/logind.conf
+            section: Login
+            option: "{{ item.key }}"
+            value: "{{ item.value }}"
+            backup: yes
+          loop:
+            - { key: HandleLidSwitch, value: ignore }
+            - { key: HandleLidSwitchExternalPower, value: ignore }
+            - { key: HandlePowerKey, value: ignore }
+            - { key: HandleSuspendKey, value: ignore }
+
+        - name: Restart logind
+          systemd:
+            name: systemd-logind
+            state: restarted
+
+        - name: Remove resume from initramfs config
+          file:
+            path: /etc/initramfs-tools/conf.d/resume
+            state: absent
+          notify: update initramfs
+
+
+        - name: Ensure mem_sleep_default=nomem in GRUB
+          lineinfile:
+            path: /etc/default/grub
+            regexp: '^GRUB_CMDLINE_LINUX_DEFAULT='
+            line: 'GRUB_CMDLINE_LINUX_DEFAULT="quiet splash mem_sleep_default=nomem"'
+            backup: yes
+
+        - name: Update GRUB
+          command: update-grub
+          register: grub_update
+          changed_when: "'done' in grub_update.stdout"
+
+        - name: Reboot if GRUB updated (optional)
+          reboot:
+            msg: "Apply kernel cmdline changes"
+            connect_timeout: 5
+            reboot_timeout: 300
+          when: grub_update.changed
+          
+      environment:
+        DEBIAN_FRONTEND: noninteractive
