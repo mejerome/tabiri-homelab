@@ -11,7 +11,11 @@
             name: "{{ item }}"
             masked: yes
             state: stopped
-          loop: [sleep.target, suspend.target, hibernate.target, hybrid-sleep.target]
+          loop: 
+            - sleep.target
+            - suspend.target
+            - hibernate.target
+            - hybrid-sleep.target
 
         - name: Disable PVE hibernate service
           systemd:
@@ -43,8 +47,7 @@
             state: absent
           notify: update initramfs
 
-
-        - name: Ensure mem_sleep_default=nomem in GRUB
+        - name: Update GRUB to ensure mem_sleep_default=nomem
           lineinfile:
             path: /etc/default/grub
             regexp: '^GRUB_CMDLINE_LINUX_DEFAULT='
@@ -56,12 +59,31 @@
           register: grub_update
           changed_when: "'done' in grub_update.stdout"
 
-        - name: Reboot if GRUB updated (optional)
+        - name: Reboot if GRUB updated
           reboot:
-            msg: "Apply kernel cmdline changes"
+            msg: "Applying kernel cmdline changes"
             connect_timeout: 5
             reboot_timeout: 300
           when: grub_update.changed
+
+        # Ensure no conflicting tlp service exists
+        - name: Check if tlp package is installed
+          command: dpkg -l | grep -E '^ii.*tlp'
+          register: tlp_check
+          changed_when: false
+          failed_when: false
+
+        - name: Stop and mask tlp services (if installed)
+          systemd:
+            name: "{{ item }}"
+            state: stopped
+            enabled: no
+            masked: yes
+          loop:
+            - tlp
+            - tlp-sleep
+          when: tlp_check.stdout != ""
+          ignore_errors: true
           
       environment:
         DEBIAN_FRONTEND: noninteractive
