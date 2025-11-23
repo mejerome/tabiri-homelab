@@ -15,7 +15,7 @@ ansible_user=root
 ansible_connection=ssh
 
 [netbird]
-hostvm ansible_host=72.61.0.17 
+hostvm ansible_host=72.xx.0.xx 
 
 [netbird:vars]
 ansible_user=root 
