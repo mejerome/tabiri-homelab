@@ -16,7 +16,7 @@ services:
       # OIDC Configuration
       - OIDC_ENABLED=true
       - OIDC_ISSUER_URL=https://audiobooks.syslogsolution.us
-      - OIDC_CLIENT_ID='344107368197455875'
-      - OIDC_CLIENT_SECRET='rvNhmFi4Y3kL0YwoiF3k1Tctsav27WjFkjA6PpyaQ0ZNaVKOmfrVnl2hMvD0yHNB'
+      - OIDC_CLIENT_ID='oidc-client-id'
+      - OIDC_CLIENT_SECRET='oidc-client-secret-key'
       - OIDC_AUTO_REGISTER=true
       - OIDC_AUTO_LAUNCH=true
