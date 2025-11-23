@@ -1,0 +1,4 @@
+pve_user: root@pam
+pve_password: 'password'
+pve_api_token_id: 'root@pam!ansible'
+pve_api_token_secret: 'token'

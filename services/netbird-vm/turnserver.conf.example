@@ -1,0 +1,30 @@
+# Coturn configuration file for NetBird
+# Copy this file to turnserver.conf and update with your values
+
+# Network interface
+listening-ip=0.0.0.0
+listening-port=3478
+tls-listening-port=5349
+
+# External IP (replace with your server's public IP)
+external-ip=YOUR_PUBLIC_IP
+
+# Relay IP ranges
+relay-ip=0.0.0.0
+
+# Authentication
+use-auth-secret
+static-auth-secret=CHANGE_ME_TURN_SECRET
+realm=netbird.selfhosted
+
+# Security
+no-tlsv1
+no-tlsv1_1
+cipher-list="ECDHE-RSA-AES256-SHA384:DHE-RSA-AES256-SHA256:ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA:ECDHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:DHE-RSA-AES128-SHA"
+
+# Logging
+log-file=/var/log/turn.log
+simple-log
+
+# Misc
+pidfile=/var/run/turnserver.pid

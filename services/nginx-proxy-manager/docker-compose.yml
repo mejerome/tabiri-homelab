@@ -1,0 +1,31 @@
+# Nginx Proxy Manager - Reverse Proxy for Nextcloud AIO
+# This setup allows you to run Nextcloud AIO behind Nginx Proxy Manager with SSL termination
+
+version: '3.8'
+
+services:
+  app:
+    image: 'jc21/nginx-proxy-manager:latest'
+    container_name: nginx-proxy-manager
+    restart: unless-stopped
+    ports:
+      # Public HTTP Port
+      - '80:80'
+      # Public HTTPS Port
+      - '443:443'
+      # Admin Web Port
+      - '81:81'
+    environment:
+      # These are the credentials to login to the admin UI
+      DB_SQLITE_FILE: "/data/database.sqlite"
+      DISABLE_IPV6: 'true'
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+    networks:
+      - proxy-network
+
+networks:
+  proxy-network:
+    driver: bridge
+    name: nginx-proxy-network

@@ -1,0 +1,9 @@
+api:
+  dashboard: true
+  insecure: false
+  debug: false
+endpoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"

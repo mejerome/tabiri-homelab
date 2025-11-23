@@ -1,4 +1,3 @@
-
 resource "aws_security_group" "netbird" {
   name        = "netbird-sg"
   description = "Allow WireGuard, SSH, and ICMP for NetBird VPN"
@@ -9,13 +8,13 @@ resource "aws_security_group" "netbird" {
     Purpose = "home-lab"
   }
 
-  # ingress {
-  #   description = "SSH"
-  #   from_port   = 22
-  #   to_port     = 22
-  #   protocol    = "tcp"
-  #   cidr_blocks = ["0.0.0.0/0"]
-  # }
+  ingress {
+    description = "SSH"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = var.admin_cidr_blocks
+  }
 
   # Beszel Monitoring
   ingress {
@@ -23,7 +22,7 @@ resource "aws_security_group" "netbird" {
     from_port   = 45876
     to_port     = 45876
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.admin_cidr_blocks
   }
 
   # SMTP over TLS
@@ -32,7 +31,7 @@ resource "aws_security_group" "netbird" {
     from_port   = 587
     to_port     = 587
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.admin_cidr_blocks
   }
 
   ingress {

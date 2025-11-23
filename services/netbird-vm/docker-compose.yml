@@ -1,0 +1,183 @@
+version: "3.4"
+services:
+  # Caddy reverse proxy
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    networks: [ netbird ]
+    ports:
+      - '443:443'
+      - '443:443/udp'
+      - '80:80'
+      - '8080:8080'
+    volumes:
+      - netbird_caddy_data:/data
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "2"
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+
+  # UI dashboard
+  dashboard:
+    image: netbirdio/dashboard:latest
+    restart: unless-stopped
+    networks: [netbird]
+    env_file:
+      - ./dashboard.env
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "2"
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+
+  # Signal service
+  signal:
+    image: netbirdio/signal:latest
+    restart: unless-stopped
+    networks: [netbird]
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "2"
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+
+  # Relay service
+  relay:
+    image: netbirdio/relay:latest
+    restart: unless-stopped
+    networks: [netbird]
+    env_file:
+      - ./relay.env
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "2"
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+
+  # Management service
+  management:
+    image: netbirdio/management:latest
+    restart: unless-stopped
+    networks: [netbird]
+    volumes:
+      - netbird_management:/var/lib/netbird
+      - ./management.json:/etc/netbird/management.json:ro
+    command: [
+      "--port", "80",
+      "--log-file", "console",
+      "--log-level", "info",
+      "--disable-anonymous-metrics=false",
+      "--single-account-mode-domain=netbird.selfhosted",
+      "--dns-domain=netbird.selfhosted",
+      "--idp-sign-key-refresh-enabled",
+    ]
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "2"
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp
+
+  # Coturn, AKA relay server
+  coturn:
+    image: coturn/coturn:latest
+    restart: unless-stopped
+    volumes:
+      - ./turnserver.conf:/etc/turnserver.conf:ro
+    network_mode: host
+    command:
+      - -c /etc/turnserver.conf
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "2"
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/lib/coturn
+
+  # Zitadel - identity provider
+  zitadel:
+    restart: 'always'
+    networks: [netbird]
+    image: 'ghcr.io/zitadel/zitadel:v2.64.1'
+    command: 'start-from-init --masterkeyFromEnv --tlsMode external'
+    env_file:
+      - ./zitadel.env
+    depends_on:
+      zdb:
+        condition: 'service_healthy'
+    volumes:
+      - ./machinekey:/machinekey:ro
+      - netbird_zitadel_certs:/zdb-certs:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "2"
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+
+  # Postgres for Zitadel
+  zdb:
+    restart: 'always'
+    networks: [netbird]
+    image: 'postgres:16-alpine'
+    env_file:
+      - ./zdb.env
+    volumes:
+      - netbird_zdb_data:/var/lib/postgresql/data:rw
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "db_prod"]
+      interval: 5s
+      timeout: 60s
+      retries: 10
+      start_period: 5s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "2"
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  netbird_zdb_data:
+  netbird_management:
+  netbird_caddy_data:
+  netbird_zitadel_certs:
+
+networks:
+  netbird:
+    driver: bridge

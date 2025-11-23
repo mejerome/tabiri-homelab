@@ -1,0 +1,39 @@
+services:
+  mysql:
+    restart: unless-stopped
+    image: mysql:5.7
+    hostname: mysql
+    environment:
+      MYSQL_DATABASE: semaphore
+      MYSQL_USER: semaphore
+      MYSQL_PASSWORD: semaphore
+      MYSQL_ROOT_PASSWORD: rootpassword
+    volumes:
+      - semaphore-mysql-data:/var/lib/mysql
+
+  semaphore:
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    image: semaphoreui/semaphore:latest
+    depends_on:
+      - mysql
+    environment:
+      SEMAPHORE_DB: semaphore
+      SEMAPHORE_DB_USER: semaphore
+      SEMAPHORE_DB_PASS: semaphore
+      SEMAPHORE_DB_HOST: mysql
+      SEMAPHORE_DB_PORT: 3306
+      SEMAPHORE_DB_DIALECT: mysql
+      SEMAPHORE_PLAYBOOK_PATH: /tmp/semaphore/
+      SEMAPHORE_ADMIN_PASSWORD: 'kakashi19'
+      SEMAPHORE_ADMIN_NAME: admin
+      SEMAPHORE_ADMIN_EMAIL: jerome@sysloggh.com
+      SEMAPHORE_ADMIN: admin
+      TZ: America/New_York
+    volumes:
+      - semaphore-data:/etc/semaphore/
+
+volumes:
+  semaphore-mysql-data:
+  semaphore-data:

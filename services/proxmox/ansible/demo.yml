@@ -1,0 +1,40 @@
+---
+- name: Display OS info of a Linux host
+  hosts: all
+  gather_facts: yes
+  become: false
+
+  tasks:
+    - name: Distribution and version
+      ansible.builtin.debug:
+        msg: "{{ ansible_distribution }} {{ ansible_distribution_version }} ({{ ansible_os_family }})"
+
+    - name: Kernel and architecture
+      ansible.builtin.debug:
+        msg: "Kernel: {{ ansible_kernel }} | Arch: {{ ansible_architecture }}"
+
+    - name: Hostname and machine
+      ansible.builtin.debug:
+        msg: "Hostname: {{ ansible_nodename }} | Machine: {{ ansible_machine }}"
+
+    - name: CPU and memory
+      ansible.builtin.debug:
+        msg: "CPU cores: {{ ansible_processor_vcpus }} | Total Memory: {{ ansible_memtotal_mb }} MB"
+
+    - name: Disk information
+      ansible.builtin.debug:
+        msg: "Disk Info: {{ ansible_devices }}"
+
+    - name: Full relevant facts
+      ansible.builtin.debug:
+        msg:
+          distribution: "{{ ansible_distribution }}"
+          version: "{{ ansible_distribution_version }}"
+          os_family: "{{ ansible_os_family }}"
+          kernel: "{{ ansible_kernel }}"
+          architecture: "{{ ansible_architecture }}"
+          hostname: "{{ ansible_nodename }}"
+          machine: "{{ ansible_machine }}"
+          cpu_cores: "{{ ansible_processor_vcpus }}"
+          total_memory_mb: "{{ ansible_memtotal_mb }}"
+          disk_info: "{{ ansible_devices }}"

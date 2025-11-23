@@ -1,0 +1,21 @@
+services:
+  jdownloader2:
+    image: jlesage/jdownloader-2
+    container_name: JDownloader-2
+    hostname: jdownloader2
+    security_opt:
+      - no-new-privileges:true
+      - seccomp:unconfined
+    ports:
+      # - 3129:3129
+      - 5800:5800
+      # - 5900:5900
+    volumes:
+      - /media/mediastore/config:/config:rw
+      - /media/mediastore:/output:rw
+    environment:
+      TZ: America/New_York
+      USER_ID: 1026
+      GROUP_ID: 100
+      DARK_MODE: 1 #Type in 0 instead of 1 if you want a light theme
+    restart: always
