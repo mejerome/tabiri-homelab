@@ -48,7 +48,7 @@ services:
       - SMTP_PORT=587
       - SMTP_AUTHTYPE=LOGIN
       - SMTP_NAME=jtabiri@gmail.com
-      - SMTP_PASSWORD=wclc qzny tspt wtai
+      - SMTP_PASSWORD='wclc qzny tspt wtai'
       - MAIL_FROM_ADDRESS=noreply
       - MAIL_DOMAIN=gmail.com
 

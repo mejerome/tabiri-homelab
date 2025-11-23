@@ -2,7 +2,7 @@ version: "3.4"
 services:
   # Caddy reverse proxy
   caddy:
-    image: caddy
+    image: caddy:2-alpine
     restart: unless-stopped
     networks: [ netbird ]
     ports:
@@ -12,12 +12,18 @@ services:
       - '8080:8080'
     volumes:
       - netbird_caddy_data:/data
-      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
     logging:
       driver: "json-file"
       options:
         max-size: "500m"
         max-file: "2"
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+
   # UI dashboard
   dashboard:
     image: netbirdio/dashboard:latest
@@ -30,7 +36,13 @@ services:
       options:
         max-size: "500m"
         max-file: "2"
-  # Signal
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+
+  # Signal service
   signal:
     image: netbirdio/signal:latest
     restart: unless-stopped
@@ -40,7 +52,13 @@ services:
       options:
         max-size: "500m"
         max-file: "2"
-  # Relay
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+
+  # Relay service
   relay:
     image: netbirdio/relay:latest
     restart: unless-stopped
@@ -52,14 +70,20 @@ services:
       options:
         max-size: "500m"
         max-file: "2"
-  # Management
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+
+  # Management service
   management:
     image: netbirdio/management:latest
     restart: unless-stopped
     networks: [netbird]
     volumes:
       - netbird_management:/var/lib/netbird
-      - ./management.json:/etc/netbird/management.json
+      - ./management.json:/etc/netbird/management.json:ro
     command: [
       "--port", "80",
       "--log-file", "console",
@@ -74,11 +98,15 @@ services:
       options:
         max-size: "500m"
         max-file: "2"
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp
+
   # Coturn, AKA relay server
   coturn:
-    image: coturn/coturn
+    image: coturn/coturn:latest
     restart: unless-stopped
-    #domainname: netbird.relay.selfhosted
     volumes:
       - ./turnserver.conf:/etc/turnserver.conf:ro
     network_mode: host
@@ -89,6 +117,13 @@ services:
       options:
         max-size: "500m"
         max-file: "2"
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/lib/coturn
+
   # Zitadel - identity provider
   zitadel:
     restart: 'always'
@@ -101,13 +136,19 @@ services:
       zdb:
         condition: 'service_healthy'
     volumes:
-      - ./machinekey:/machinekey
+      - ./machinekey:/machinekey:ro
       - netbird_zitadel_certs:/zdb-certs:ro
     logging:
       driver: "json-file"
       options:
         max-size: "500m"
         max-file: "2"
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+
   # Postgres for Zitadel
   zdb:
     restart: 'always'
@@ -128,6 +169,9 @@ services:
       options:
         max-size: "500m"
         max-file: "2"
+    security_opt:
+      - no-new-privileges:true
+
 volumes:
   netbird_zdb_data:
   netbird_management:
@@ -136,3 +180,4 @@ volumes:
 
 networks:
   netbird:
+    driver: bridge

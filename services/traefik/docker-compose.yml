@@ -1,0 +1,28 @@
+secrets:
+  cf-token:
+    file: ./cf-token
+
+volumes:
+  traefik-certs:
+    name: traefik-certs
+  
+services:
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    secrets:
+      - cf-token
+    env_file:
+      - ./.env
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - TZ=${TZ}
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./traefik.yml:/etc/traefik/traefik.yml:ro"
+      - traefik-certs:/certs

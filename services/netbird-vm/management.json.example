@@ -1,0 +1,114 @@
+{
+  "Stuns": [
+    {
+      "Proto": "udp",
+      "Address": "your-domain:3478",
+      "Username": "",
+      "Password": ""
+    }
+  ],
+  "TURNConfig": {
+    "TimeBasedCredentials": false,
+    "CredentialsTTL": "12h0m0s",
+    "Secret": "CHANGE_ME_TURN_SECRET",
+    "URIs": [
+      "turn:your-domain:3478?transport=udp",
+      "turn:your-domain:3478?transport=tcp",
+      "turns:your-domain:5349?transport=tcp"
+    ]
+  },
+  "Signal": {
+    "Proto": "http",
+    "Address": "signal:80",
+    "Username": "",
+    "Password": ""
+  },
+  "Datadir": "",
+  "DataStore": {
+    "Engine": "sqlite"
+  },
+  "HttpConfig": {
+    "Address": "0.0.0.0:80",
+    "Auth": {
+      "Provider": "auth0",
+      "Auth0": {
+        "Domain": "your-domain",
+        "Audience": "netbird.selfhosted",
+        "ClientId": "CHANGE_ME_CLIENT_ID",
+        "TokenSource": "http",
+        "UseIDToken": false,
+        "Http": {
+          "AuthorizationURL": "https://your-domain/api/v1/device/auth",
+          "TokenURL": "https://your-domain/oauth/token",
+          "DeviceCodeURL": "https://your-domain/oauth/device/code"
+        }
+      }
+    }
+  },
+  "IdpManagerConfig": {
+    "ManagerType": "zitadel",
+    "Zitadel": {
+      "Issuer": "https://your-domain",
+      "ClientId": "CHANGE_ME_CLIENT_ID",
+      "ClientSecret": "CHANGE_ME_CLIENT_SECRET",
+      "ApiAudience": "netbird",
+      "DefaultDomain": "netbird.selfhosted",
+      "Scopes": [
+        "openid",
+        "profile",
+        "email"
+      ],
+      "GrantType": "client_credentials"
+    }
+  },
+  "DeviceAuthorizationFlow": {
+    "Provider": "zitadel",
+    "Zitadel": {
+      "ClientID": "CHANGE_ME_CLIENT_ID",
+      "ClientSecret": "CHANGE_ME_CLIENT_SECRET",
+      "ApiAudience": "netbird",
+      "ProviderUrl": "https://your-domain",
+      "Scopes": [
+        "openid",
+        "profile",
+        "email"
+      ]
+    }
+  },
+  "PKCEAuthorizationFlow": {
+    "Provider": "zitadel",
+    "Zitadel": {
+      "ClientID": "CHANGE_ME_CLIENT_ID",
+      "ClientSecret": "CHANGE_ME_CLIENT_SECRET",
+      "ApiAudience": "netbird",
+      "ProviderUrl": "https://your-domain",
+      "Scopes": [
+        "openid",
+        "profile",
+        "email"
+      ]
+    }
+  },
+  "StoreConfig": {
+    "Engine": "sqlite"
+  },
+  "Relay": {
+    "Address": "relay:80",
+    "Username": "",
+    "Password": ""
+  },
+  "ReverseProxy": {
+    "TrustedHTTPHeaders": [
+      "X-Forwarded-For",
+      "X-Real-IP",
+      "X-Forwarded-Proto"
+    ],
+    "TrustedHTTPProxies": [
+      "127.0.0.1/32"
+    ],
+    "TrustedHTTPProxiesCount": 1,
+    "TrustedOriginHostnames": [
+      "your-domain"
+    ]
+  }
+}

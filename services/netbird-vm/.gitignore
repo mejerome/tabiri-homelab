@@ -1,0 +1,50 @@
+# Terraform files
+*.tfstate
+*.tfstate.backup
+.terraform/
+*.plan
+*.tfvars
+
+# Backup files
+*.backup
+backup/
+backups/
+
+# Environment files (should not contain secrets in committed versions)
+*.env
+.env
+
+# SSH keys
+*.pem
+*.key
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Docker
+docker-compose.override.yml
+
+# Certificates (if stored locally)
+*.crt
+*.key
+*.pem
+certs/
