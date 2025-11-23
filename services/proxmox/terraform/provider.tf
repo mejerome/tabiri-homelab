@@ -8,10 +8,10 @@ terraform {
 }
 
 provider "proxmox" {
-  endpoint = "https://pve.syslogsolution.us/api2/json"
+  endpoint = "https://pve.local/api2/json"
   insecure = true
   username = "terraform@pve"
-  password = "9dfccbf4cd77"
+  password = "password"
 
   ssh {
     agent = false
@@ -25,8 +25,8 @@ provider "proxmox" {
 
 # provider "proxmox" {
 #   alias = "pve"
-#   pm_api_url = "https://pve.syslogsolution.us/api2/json"
+#   pm_api_url = "https://pve.local/api2/json"
 #   pm_user = "terraform@pve"
-#   pm_password = "9dfccbf4cd77"
+#   pm_password = "password"
 #   pm_tls_insecure = true
 # }

@@ -1,4 +1,4 @@
 pve_user: root@pam
-pve_password: 'kakashi19'
+pve_password: 'password'
 pve_api_token_id: 'root@pam!ansible'
-pve_api_token_secret: 'a6d6b3ad-594d-4076-8624-ee456d17c0fc'
+pve_api_token_secret: 'token'
